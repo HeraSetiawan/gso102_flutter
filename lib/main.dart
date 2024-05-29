@@ -43,22 +43,46 @@ class _MyAppState extends State<MyApp> {
   }
 }
 
-class PageSatu extends StatelessWidget {
+class PageSatu extends StatefulWidget {
   const PageSatu({
     super.key,
   });
 
   @override
+  State<PageSatu> createState() => _PageSatuState();
+}
+
+class _PageSatuState extends State<PageSatu> {
+  bool isFavorit = false;
+  void like(){
+    setState(() {
+      isFavorit = !isFavorit;
+    });
+  }
+  @override
   Widget build(BuildContext context) {
-    return ListView(children:const [
+    return ListView(children: [
       ListTile(
+        trailing: IconButton(
+          onPressed: like, 
+          icon: Icon(
+            isFavorit ? Icons.favorite : Icons.favorite_border, 
+            color: Colors.pink,)),
         leading: CircleAvatar(foregroundImage: NetworkImage("https://picsum.photos/200"),),
         title: Text("Burger Keju"),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("Rp. 20.000"),
-            Icon(Icons.star, color: Colors.amber,)
+            Row(
+              children: [
+                Icon(Icons.star, color: Colors.amber,),
+                Icon(Icons.star, color: Colors.amber,),
+                Icon(Icons.star, color: Colors.amber,),
+                Icon(Icons.star, color: Colors.grey,),
+                Icon(Icons.star, color: Colors.grey,),
+              ],
+            )
           ],
         ),
       ),
