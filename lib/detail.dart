@@ -14,13 +14,25 @@ class DetailPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
+                onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NewScreen(pesan: "Ganti Layar"))),
+                child: Text("Replace Screen")),
+            ElevatedButton(
                 onPressed: () {
-                  Navigator.push(
+                  Future<dynamic> hasil = Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) =>
                             const NewScreen(pesan: "Will You Marry Me"),
                       ));
+                  hasil.then(
+                      (value) => ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(value),
+                            ),
+                          ));
                 },
                 child: const Text("aku mau ngomong sesuatu")),
           ],
@@ -51,13 +63,17 @@ class NewScreen extends StatelessWidget {
                 children: [
                   ElevatedButton(
                       onPressed: () => Navigator.pop(context),
-                      child: Text('Ngaak')),
-                  SizedBox(
+                      child: const Text('Ngaak')),
+                  const SizedBox(
                     width: 12,
                   ),
                   ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: Text('Ya')),
+                      style: const ButtonStyle(
+                          foregroundColor: WidgetStatePropertyAll(Colors.white),
+                          backgroundColor:
+                              WidgetStatePropertyAll(Colors.green)),
+                      onPressed: () => Navigator.pop(context, 'Happy Marriage'),
+                      child: const Text('Ya')),
                 ],
               )
             ],
