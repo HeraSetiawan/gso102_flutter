@@ -63,7 +63,7 @@ class _PageSatuState extends State<PageSatu> {
   Widget build(BuildContext context) {
     return ListView(children: [
       ListTile(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage())),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailPage())),
         trailing: IconButton(
           onPressed: like, 
           icon: Icon(
