@@ -1,7 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/detail.dart';
+import 'package:myapp/store.dart';
+
 void main() {
-  runApp(const MaterialApp(debugShowCheckedModeBanner: false, home: MyApp()));
+  runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
+    // initialRoute: '/',
+    // routes: {
+    //   '/' : (context) => const PageSatu(),
+    //   '/detail' : (context) => const PageDua(),
+    //   '/store' : (context) => const MyStore(),
+    // },
+    home: MyApp(),
+  ));
 }
 
 class MyApp extends StatefulWidget {
@@ -15,15 +26,12 @@ class _MyAppState extends State<MyApp> {
   int index = 0;
   List page = [
     const PageSatu(),
-    const PageDua(),
+    const MyStore(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Apo Kabar"),
-      ),
       body: page.elementAt(index),
       bottomNavigationBar: NavigationBar(
         indicatorColor: Colors.green.shade200,
@@ -36,7 +44,7 @@ class _MyAppState extends State<MyApp> {
         destinations: const [
           NavigationDestination(icon: Icon(Icons.chat), label: "Chat"),
           NavigationDestination(
-              icon: Icon(Icons.circle_notifications), label: "notif")
+              icon: Icon(Icons.store), label: "My Store")
         ],
       ),
     );
