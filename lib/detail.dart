@@ -17,8 +17,8 @@ class DetailPage extends StatelessWidget {
                 onPressed: () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => NewScreen(pesan: "Ganti Layar"))),
-                child: Text("Replace Screen")),
+                        builder: (context) => const NewScreen(pesan: "Ganti Layar"))),
+                child: const Text("Replace Screen")),
             ElevatedButton(
                 onPressed: () {
                   Future<dynamic> hasil = Navigator.push(

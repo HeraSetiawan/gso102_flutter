@@ -3,7 +3,7 @@ import 'package:myapp/detail.dart';
 import 'package:myapp/store.dart';
 
 void main() {
-  runApp(MaterialApp(
+  runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
     // initialRoute: '/',
     // routes: {
