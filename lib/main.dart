@@ -5,12 +5,6 @@ import 'package:myapp/store.dart';
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
-    // initialRoute: '/',
-    // routes: {
-    //   '/' : (context) => const PageSatu(),
-    //   '/detail' : (context) => const PageDua(),
-    //   '/store' : (context) => const MyStore(),
-    // },
     home: MyApp(),
   ));
 }
