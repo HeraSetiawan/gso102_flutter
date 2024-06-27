@@ -44,24 +44,43 @@ class DetailProductPage extends StatelessWidget {
               child: Text(product['description']),
             ),
             const Text('Produk Serupa',style: TextStyle(fontSize: 18)),
-            const SizedBox(
+            SizedBox(
               height: 100,
-              child: ProdukSerupa()
+              child: ProdukSerupa(kategori: product['category'],)
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: Row(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 8),
+            height: 50,
+            color: Colors.deepOrange,
+            child: Center(child: Text("Tambah Keranjang", style: TextStyle(color: Colors.white,fontSize: 20),)),
+          ),
+          Expanded(
+            child: Container(
+              height: 50,
+              color: Colors.teal,
+              child: Center(child: Text("Belanja sekarang", style: TextStyle(color: Colors.white, fontSize: 20),)),
+            
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
 class ProdukSerupa extends StatelessWidget {
-  const ProdukSerupa({super.key});
+  const ProdukSerupa({super.key, required this.kategori});
 
+  final String kategori;
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: ambilProdukSerupa(), 
+      future: ambilProdukSerupa(kategori), 
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final List listProduk = snapshot.data!;
@@ -70,15 +89,22 @@ class ProdukSerupa extends StatelessWidget {
             itemCount: listProduk.length,
             itemBuilder: (context, index) {
              final produkSerupa = listProduk[index];
-             return Container(
-              width: 140,
-              margin: EdgeInsets.symmetric(vertical: 8),
-               child: Column(
-                 children: [
-                   Expanded(child: Image.network(produkSerupa['image'])),
-                   Text(produkSerupa['title'], overflow: TextOverflow.ellipsis,),
-                   Text(formatRupiah(produkSerupa['price'])),
-                 ],
+             return GestureDetector(
+              onTap: () => Navigator.pushReplacement(
+                context,MaterialPageRoute(
+                  builder: (context) => DetailProductPage(product: produkSerupa),
+                  )
+                ),
+               child: Container(
+                width: 140,
+                margin: EdgeInsets.symmetric(vertical: 8),
+                 child: Column(
+                   children: [
+                     Expanded(child: Image.network(produkSerupa['image'])),
+                     Text(produkSerupa['title'], overflow: TextOverflow.ellipsis,),
+                     Text(formatRupiah(produkSerupa['price'])),
+                   ],
+                 ),
                ),
              );
             },
@@ -90,8 +116,8 @@ class ProdukSerupa extends StatelessWidget {
   }
 }
 
-Future<List> ambilProdukSerupa() async {
-  final respon = await http.get(Uri.parse("https://fakestoreapi.com/products/category/jewelery"));
+Future<List> ambilProdukSerupa(String kategori) async {
+  final respon = await http.get(Uri.parse("https://fakestoreapi.com/products/category/$kategori"));
   if (respon.statusCode == 200) {
     final produkSerupa = jsonDecode(respon.body);
     return produkSerupa as List;
