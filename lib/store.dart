@@ -13,7 +13,7 @@ class MyStore extends StatefulWidget {
 }
 
 class _MyStoreState extends State<MyStore> {
-  late Future<List> _futureProduk;
+  late Future<List<ProdukModal>> _futureProduk;
   @override
   void initState() {
     _futureProduk = ambilProduk();
@@ -28,28 +28,31 @@ class _MyStoreState extends State<MyStore> {
         leading: const Icon(Icons.store),
         title: const Text("Toko WakEbok"),
       ),
-      body: FutureBuilder(
+      body: FutureBuilder<List<ProdukModal>>(
         future: _futureProduk,
         builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+            child: CircularProgressIndicator(),
+          );}
+
           if (snapshot.hasData) {
-            List products = snapshot.data!;
+            List<ProdukModal> products = snapshot.data!;
             return GridView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  childAspectRatio: 3 / 4,
                   crossAxisCount: 2,
                   crossAxisSpacing: 18,
                   mainAxisSpacing: 18,
                 ),
                 itemCount: products.length,
                 itemBuilder: (context, index) {
-                  final Map<String, dynamic> product = products[index];
+                  final ProdukModal product = products[index];
                   return Produk(product: product);
                 });
           }
-
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return Center(child:Text("Ada Error saat mengambil ProdukModal ${snapshot.error}"));
         },
       ),
     );
@@ -62,7 +65,7 @@ class Produk extends StatefulWidget {
     required this.product,
   });
 
-  final Map<String, dynamic> product;
+  final ProdukModal product;
 
   @override
   State<Produk> createState() => _ProdukState();
@@ -85,68 +88,69 @@ class _ProdukState extends State<Produk> {
         MaterialPageRoute(
             builder: (context) => DetailProductPage(product: widget.product)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-              child: Container(
-                  alignment: Alignment.center,
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: Image.network(
-                    widget.product['image'],
-                  ))),
-          Container(
-              padding: const EdgeInsets.all(2),
-              decoration: BoxDecoration(
-                border: Border.all(width: 1, color: Colors.purple),
-              ),
-              child: Text(
-                widget.product['category'].toUpperCase(),
-                style: const TextStyle(color: Colors.purple),
-              )),
-          Text(
-            widget.product['title'],
-            style: const TextStyle(fontSize: 18),
-            overflow: TextOverflow.ellipsis,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                formatRupiah(widget.product['price']),
-                style: const TextStyle(
-                    color: Colors.purpleAccent, fontWeight: FontWeight.bold),
-              ),
-              Text("${widget.product['rating']['count']} Terjual")
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              Text(widget.product['rating']['rate'].toString()),
-              IconButton(
-                  onPressed: () => _tombolLike(),
-                  icon: Icon(
-                    diLike ? Icons.favorite : Icons.favorite_border,
-                    color: Colors.pink,
-                  ))
-            ],
-          )
-        ],
+      child: GridTile(
+        header: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Wrap(
+              children: [
+                Icon(Icons.star, color: Colors.amber,),
+                Text(widget.product.rating.toString()) ,
+              ]) ,
+            IconButton(
+                onPressed: () => _tombolLike(),
+                icon: Icon(
+                  diLike ? Icons.favorite : Icons.favorite_border,
+                  color: Colors.pink,
+                ))
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+                child: Container(
+                    alignment: Alignment.center,
+                    margin: const EdgeInsets.only(bottom: 4,top: 36),
+                    child: Image.network(
+                      widget.product.gambar,
+                    ))),
+            Container(
+                padding: const EdgeInsets.all(2),
+                decoration: BoxDecoration(
+                  border: Border.all(width: 1, color: Colors.purple),
+                ),
+                child: Text(
+                  widget.product.kategori.toUpperCase(),
+                  style: const TextStyle(color: Colors.purple),
+                )),
+            Text(
+              widget.product.judul,
+              overflow: TextOverflow.ellipsis,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  formatRupiah(widget.product.harga),
+                  style: const TextStyle(
+                      color: Colors.purpleAccent, fontWeight: FontWeight.bold),
+                ),
+                Text("${widget.product.terjual} Terjual")
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-Future<List> ambilProduk() async {
+Future<List<ProdukModal>> ambilProduk() async {
   final respon = await http.get(Uri.parse("https://fakestoreapi.com/products"));
   if (respon.statusCode == 200) {
-    final data = jsonDecode(respon.body);
-    return data;
+    final data = jsonDecode(respon.body) as List;
+    return data.map((json) => ProdukModal.fromJson(json),).toList();
   }
   throw Exception('Gagal Memuat Data');
 }
@@ -167,13 +171,17 @@ class ProdukModal {
   final String deskripsi;
   final String gambar;
 
-  ProdukModal({
-    required this.judul,required this.kategori, 
-    required this.harga,required this.terjual, 
-    required this.rating,required this.deskripsi, 
-    required this.gambar,required this.id});
+  ProdukModal(
+      {required this.judul,
+      required this.kategori,
+      required this.harga,
+      required this.terjual,
+      required this.rating,
+      required this.deskripsi,
+      required this.gambar,
+      required this.id});
 
-  factory ProdukModal.fromJson(Map<String, dynamic> json){
+  factory ProdukModal.fromJson(Map<String, dynamic> json) {
     return ProdukModal(
       id: json['id'] as int,
       judul: json['title'] as String,
@@ -181,8 +189,8 @@ class ProdukModal {
       harga: json['price'] as num,
       terjual: json['rating']['count'] as int,
       rating: json['rating']['rate'] as num,
-      deskripsi: json['dexription'] as String,
+      deskripsi: json['description'] as String,
       gambar: json['image'] as String,
-     );
+    );
   }
 }

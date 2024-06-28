@@ -5,7 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:myapp/store.dart';
 
 class DetailProductPage extends StatelessWidget {
-  final Map<String, dynamic> product;
+  final ProdukModal product;
   const DetailProductPage({super.key, required this.product});
 
   @override
@@ -24,16 +24,16 @@ class DetailProductPage extends StatelessWidget {
                 alignment: Alignment.center,
                 height: 200,
                 margin: EdgeInsets.only(bottom: 8),
-                child: Image.network(product['image'])),
-            Text(product['category'].toUpperCase()),
-            Text(product['title']),
+                child: Image.network(product.gambar)),
+            Text(product.kategori.toUpperCase()),
+            Text(product.judul),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(formatRupiah(product['price']),
+                Text(formatRupiah(product.harga),
                   style: TextStyle(fontSize: 18),
                 ),
-                Text("${product['rating']['count']} Terjual",
+                Text("${product.terjual} Terjual",
                     style: TextStyle(fontSize: 18)),
               ],
             ),
@@ -41,12 +41,12 @@ class DetailProductPage extends StatelessWidget {
               color: Colors.grey.shade200,
               padding: EdgeInsets.all(10),
               margin: EdgeInsets.symmetric(vertical: 10),
-              child: Text(product['description']),
+              child: Text(product.deskripsi),
             ),
             const Text('Produk Serupa',style: TextStyle(fontSize: 18)),
             SizedBox(
               height: 100,
-              child: ProdukSerupa(kategori: product['category'],)
+              child: ProdukSerupa(kategori: product.kategori,)
             ),
           ],
         ),
