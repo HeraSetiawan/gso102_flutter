@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:myapp/detail.dart';
+import 'package:myapp/provider_produk.dart';
 import 'package:myapp/store.dart';
+import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: MyApp(),
+
+void main() =>
+  runApp(ChangeNotifierProvider(
+    create: (context) => ProviderProduk(),
+    child: const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: MyApp(),
+    ),
   ));
-}
+
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

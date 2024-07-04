@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:myapp/detail_product.dart';
+import 'package:myapp/produk_modal.dart';
 
 class MyStore extends StatefulWidget {
   const MyStore({super.key});
@@ -23,7 +24,7 @@ class _MyStoreState extends State<MyStore> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      // backgroundColor: Colors.white,
       appBar: AppBar(
         leading: const Icon(Icons.store),
         title: const Text("Toko WakEbok"),
@@ -72,11 +73,10 @@ class Produk extends StatefulWidget {
 }
 
 class _ProdukState extends State<Produk> {
-  bool diLike = false;
 
-  void _tombolLike() {
+  void _tombolLike(product) {
     setState(() {
-      diLike = !diLike;
+      product.isFavorit = !product.isFavorit;
     });
   }
 
@@ -88,58 +88,70 @@ class _ProdukState extends State<Produk> {
         MaterialPageRoute(
             builder: (context) => DetailProductPage(product: widget.product)),
       ),
-      child: GridTile(
-        header: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Wrap(
-              children: [
-                Icon(Icons.star, color: Colors.amber,),
-                Text(widget.product.rating.toString()) ,
-              ]) ,
-            IconButton(
-                onPressed: () => _tombolLike(),
-                icon: Icon(
-                  diLike ? Icons.favorite : Icons.favorite_border,
-                  color: Colors.pink,
-                ))
-          ],
+      child: Container(
+        decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+boxShadow: [
+  BoxShadow(color: Colors.grey,offset: Offset(2, 2),blurRadius: 4)
+]
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-                child: Container(
-                    alignment: Alignment.center,
-                    margin: const EdgeInsets.only(bottom: 4,top: 36),
-                    child: Image.network(
-                      widget.product.gambar,
-                    ))),
-            Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  border: Border.all(width: 1, color: Colors.purple),
-                ),
-                child: Text(
-                  widget.product.kategori.toUpperCase(),
-                  style: const TextStyle(color: Colors.purple),
-                )),
-            Text(
-              widget.product.judul,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  formatRupiah(widget.product.harga),
-                  style: const TextStyle(
-                      color: Colors.purpleAccent, fontWeight: FontWeight.bold),
-                ),
-                Text("${widget.product.terjual} Terjual")
-              ],
-            ),
-          ],
+
+        padding: EdgeInsets.all(3),
+        child: GridTile(
+          header: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.star, color: Colors.amber,),
+                  Text(widget.product.rating.toString()) ,
+                ]) ,
+              IconButton(
+                  onPressed: () => _tombolLike(widget.product),
+                  icon: Icon(
+                    widget.product.isFavorit ? Icons.favorite : Icons.favorite_border,
+                    color: Colors.pink,
+                  ))
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                  child: Container(
+                      alignment: Alignment.center,
+                      margin: const EdgeInsets.only(bottom: 4,top: 36),
+                      child: Image.network(
+                        widget.product.gambar,
+                      ))),
+              Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    border: Border.all(width: 1, color: Colors.purple),
+                  ),
+                  child: Text(
+                    widget.product.kategori.toUpperCase(),
+                    style: const TextStyle(color: Colors.purple),
+                  )),
+              Text(
+                widget.product.judul,
+                overflow: TextOverflow.ellipsis,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                
+                children: [
+                  Text(
+                    formatRupiah(widget.product.harga),
+                    style: const TextStyle(
+                        color: Colors.purpleAccent, fontWeight: FontWeight.bold),
+                  ),
+                  Text("${widget.product.terjual} Terjual",overflow: TextOverflow.ellipsis,)
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -159,38 +171,4 @@ String formatRupiah(num price) {
   final formatRupiah =
       NumberFormat.currency(locale: 'ID_id', symbol: 'Rp. ', decimalDigits: 0);
   return formatRupiah.format(price * 15000);
-}
-
-class ProdukModal {
-  final int id;
-  final String judul;
-  final String kategori;
-  final num harga;
-  final int terjual;
-  final num rating;
-  final String deskripsi;
-  final String gambar;
-
-  ProdukModal(
-      {required this.judul,
-      required this.kategori,
-      required this.harga,
-      required this.terjual,
-      required this.rating,
-      required this.deskripsi,
-      required this.gambar,
-      required this.id});
-
-  factory ProdukModal.fromJson(Map<String, dynamic> json) {
-    return ProdukModal(
-      id: json['id'] as int,
-      judul: json['title'] as String,
-      kategori: json['category'] as String,
-      harga: json['price'] as num,
-      terjual: json['rating']['count'] as int,
-      rating: json['rating']['rate'] as num,
-      deskripsi: json['description'] as String,
-      gambar: json['image'] as String,
-    );
-  }
 }

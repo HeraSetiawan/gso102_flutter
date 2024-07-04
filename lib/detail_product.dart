@@ -3,6 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:myapp/store.dart';
+import 'package:myapp/keranjang.dart';
+import 'package:myapp/provider_produk.dart';
+import 'package:provider/provider.dart';
+import 'package:myapp/produk_modal.dart';
 
 class DetailProductPage extends StatelessWidget {
   final ProdukModal product;
@@ -14,6 +18,16 @@ class DetailProductPage extends StatelessWidget {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text("Detail Produk"),
+        actions: [
+          IconButton(
+              onPressed: () => Navigator.push(context, 
+              MaterialPageRoute(builder: (context) => KeranjangPage(),),),
+              icon: Badge(
+                label: Consumer<ProviderProduk>(
+                  builder: (context, produk, child) => Text('${produk.jmlKeranjang}')),
+                child:const Icon(Icons.shopping_bag)),
+            )
+        ],
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(horizontal: 8),
@@ -53,11 +67,20 @@ class DetailProductPage extends StatelessWidget {
       ),
       bottomNavigationBar: Row(
         children: [
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 8),
-            height: 50,
-            color: Colors.deepOrange,
-            child: Center(child: Text("Tambah Keranjang", style: TextStyle(color: Colors.white,fontSize: 20),)),
+          InkWell(
+            onTap: () {
+              Provider.of<ProviderProduk>(context,listen: false).tambahKeranjang(product);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Berhasil menambahkan ${product.judul} ke keranjang'))
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 8),
+              width: 100,
+              height: 50,
+              color: Colors.deepOrange,
+              child: Center(child:  Icon(Icons.add_shopping_cart,color: Colors.white,),),
+            ),
           ),
           Expanded(
             child: Container(
@@ -82,8 +105,11 @@ class ProdukSerupa extends StatelessWidget {
     return FutureBuilder(
       future: ambilProdukSerupa(kategori), 
       builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          Center(child: Text('ada error tampilan produk serupa ${snapshot.error}'),);
+        }
         if (snapshot.hasData) {
-          final List listProduk = snapshot.data!;
+          final List<ProdukModal> listProduk = snapshot.data!;
           return ListView.builder(
             scrollDirection: Axis.horizontal,
             itemCount: listProduk.length,
@@ -100,9 +126,9 @@ class ProdukSerupa extends StatelessWidget {
                 margin: EdgeInsets.symmetric(vertical: 8),
                  child: Column(
                    children: [
-                     Expanded(child: Image.network(produkSerupa['image'])),
-                     Text(produkSerupa['title'], overflow: TextOverflow.ellipsis,),
-                     Text(formatRupiah(produkSerupa['price'])),
+                     Expanded(child: Image.network(produkSerupa.gambar)),
+                     Text(produkSerupa.judul, overflow: TextOverflow.ellipsis,),
+                     Text(formatRupiah(produkSerupa.harga)),
                    ],
                  ),
                ),
@@ -116,11 +142,12 @@ class ProdukSerupa extends StatelessWidget {
   }
 }
 
-Future<List> ambilProdukSerupa(String kategori) async {
+Future<List<ProdukModal>> ambilProdukSerupa(String kategori) async {
   final respon = await http.get(Uri.parse("https://fakestoreapi.com/products/category/$kategori"));
   if (respon.statusCode == 200) {
-    final produkSerupa = jsonDecode(respon.body);
-    return produkSerupa as List;
+    final jsonList = jsonDecode(respon.body) as List;
+    return jsonList.map((json) => ProdukModal.fromJson(json),).toList();
+    
   }
   throw Exception("Gagal Ambil Produk Serupa"); 
 }
