@@ -12,31 +12,42 @@ class KeranjangPage extends StatelessWidget {
       appBar: AppBar(
         title:const Text('Keranjang'),
       ),
-      body: Consumer<ProviderProduk>(
-        builder: (context, value, child) =>
-           ListView.builder(
-            itemCount: value.jmlKeranjang,
-            itemBuilder: (context, index) {
-              final produk = value.listProduk[index];
-              return Dismissible(
-                direction: DismissDirection.endToStart,
-                onDismissed: (_) {
-                  Provider.of<ProviderProduk>(context,listen: false).hapusKeranjang(produk);
-                },
-                key: ValueKey(produk.id),
-                background: Container(
-                  alignment: Alignment.centerRight,
-                  color: Colors.red,
-                  child: const Icon(Icons.delete,color: Colors.white,size: 32,),
-                ),
-                child: ListTile(
-                  leading: Image.network(produk.gambar, width: 45,),
-                  title: Text(produk.judul),
-                  subtitle: Text(formatRupiah(produk.harga)),
-                ),
-              );
-            }),
-        )
+      body: Column(
+        children: [
+          Consumer<ProviderProduk>(
+            builder: (context, value, child) =>
+               ListView.builder(
+                itemCount: value.jmlKeranjang,
+                itemBuilder: (context, index) {
+                  final produk = value.listProduk[index];
+                  return Dismissible(
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (_) {
+                      Provider.of<ProviderProduk>(context,listen: false).hapusKeranjang(produk);
+                    },
+                    key: ValueKey(produk.id),
+                    background: Container(
+                      alignment: Alignment.centerRight,
+                      color: Colors.red,
+                      child: const Icon(Icons.delete,color: Colors.white,size: 32,),
+                    ),
+                    child: ListTile(
+                      leading: Image.network(produk.gambar, width: 45,),
+                      title: Text(produk.judul),
+                      subtitle: Text(formatRupiah(produk.harga)),
+                    ),
+                  );
+                }),
+            ),
+            Container(
+              child: Column(children: [
+                //tugas buat 2 buah tombol elevated
+                // 1 tulisan Cash on Delivery
+                //2  tulisan Transfer
+              ],),
+            )
+        ],
+      )
         );
   }
 }
