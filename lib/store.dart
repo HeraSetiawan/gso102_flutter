@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:myapp/detail_product.dart';
+import 'package:myapp/keranjang.dart';
 import 'package:myapp/produk_modal.dart';
+import 'package:myapp/provider_produk.dart';
+import 'package:provider/provider.dart';
 
 class MyStore extends StatefulWidget {
   const MyStore({super.key});
@@ -28,6 +31,16 @@ class _MyStoreState extends State<MyStore> {
       appBar: AppBar(
         leading: const Icon(Icons.store),
         title: const Text("Toko WakEbok"),
+               actions: [
+          IconButton(
+              onPressed: () => Navigator.push(context, 
+              MaterialPageRoute(builder: (context) =>const KeranjangPage(),),),
+              icon: Badge(
+                label: Consumer<ProviderProduk>(
+                  builder: (context, produk, child) => Text('${produk.jmlKeranjang}')),
+                child:const Icon(Icons.shopping_bag)),
+            )
+        ],
       ),
       body: FutureBuilder<List<ProdukModal>>(
         future: _futureProduk,

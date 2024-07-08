@@ -33,4 +33,17 @@ class ProdukModal {
       gambar: json['image'] as String,
     );
   }
+
+  Map<String,dynamic> toJson() => {
+    'id' : id,
+    'title' : judul,
+    'category' : kategori,
+    'price' : harga,
+    'description' : deskripsi,
+    'image' : gambar,
+    'rating' : {
+      'count' : terjual,
+      'rate' : rating,
+    } 
+  };
 }
