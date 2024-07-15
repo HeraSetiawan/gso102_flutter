@@ -83,45 +83,50 @@ class KeranjangPage extends StatelessWidget {
                   ElevatedButton.icon(
                     onPressed: () {
                       showModalBottomSheet(
+                        isScrollControlled: true,
                         context: context,
-                        builder: (context) => FractionallySizedBox(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Column(
-                              children: [
-                                const SizedBox(
-                                  height: 30,
-                                  width: 50,
-                                  child: Divider(
-                                    thickness: 2,
-                                    color: Colors.black54,
+                        builder: (context) {
+                          return FractionallySizedBox(
+                            heightFactor: 0.9,
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              child: Column(
+                                children: [
+                                  const SizedBox(
+                                    height: 30,
+                                    width: 50,
+                                    child: Divider(
+                                      thickness: 2,
+                                      color: Colors.black54,
+                                    ),
                                   ),
-                                ),
-                                TextFormField(
-                                  decoration: const InputDecoration(
-                                      label: Text('Nama Pembeli')),
-                                ),
-                                const SizedBox(
-                                  height: 20,
-                                ),
-                                TextFormField(
-                                  maxLines: 4,
-                                  decoration: const InputDecoration(
-                                      floatingLabelBehavior:
-                                          FloatingLabelBehavior.always,
-                                      label: Text('Alamat Penerima'),
-                                      border: OutlineInputBorder()),
-                                ),
-                                Align(
-                                  alignment: Alignment.centerRight,
-                                  child: ElevatedButton(
-                                      onPressed: () {},
-                                      child: const Text('Kirim')),
-                                )
-                              ],
+                                  TextFormField(
+                                    decoration: const InputDecoration(
+                                        label: Text('Nama Pembeli')),
+                                  ),
+                                  const SizedBox(
+                                    height: 20,
+                                  ),
+                                  TextFormField(
+                                    maxLines: 4,
+                                    decoration: const InputDecoration(
+                                        floatingLabelBehavior:
+                                            FloatingLabelBehavior.always,
+                                        label: Text('Alamat Penerima'),
+                                        border: OutlineInputBorder()),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: ElevatedButton(
+                                        onPressed: () {},
+                                        child: const Text('Kirim')),
+                                  )
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       );
                     },
                     style: const ButtonStyle(
