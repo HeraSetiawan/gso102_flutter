@@ -16,11 +16,26 @@ class Alamat {
       'alamatPengiriman': alamatPengiriman,
     };
   }
+
+  factory Alamat.fromMap(Map<String, dynamic> map) {
+    return Alamat(
+        id: map['id'],
+        namaPenerima: map['namaPenerima'],
+        alamatPengiriman: map['alamatPengiriman']);
+  }
 }
 
 class AlamatProvider extends ChangeNotifier {
-  List<Alamat> _listProduk = [];
-  List<Alamat> get listProduk => _listProduk;
+  List<Alamat> _listAlamat = [];
+  List<Alamat> get listAlamat => _listAlamat;
+
+  AlamatProvider() {
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    await getAlamat();
+  }
 
   Future<Database> initDatabase() async {
     final database =
@@ -33,9 +48,21 @@ class AlamatProvider extends ChangeNotifier {
     return database;
   }
 
+  Future<void> getAlamat() async {
+    final db = await initDatabase();
+    final listAlamat = await db.query('tb_alamat');
+    _listAlamat = listAlamat
+        .map(
+          (e) => Alamat.fromMap(e),
+        )
+        .toList();
+    notifyListeners();
+  }
+
   Future<void> insertAlamat(Alamat alamat) async {
     final db = await initDatabase();
-    await db.insert('alamat', alamat.toMap(),
+    await db.insert('tb_alamat', alamat.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace);
+    await _loadData();
   }
 }

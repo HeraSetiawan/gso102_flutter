@@ -1,10 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/alamat.dart';
 import 'package:myapp/provider_produk.dart';
 import 'package:myapp/store.dart';
 import 'package:provider/provider.dart';
 
-class KeranjangPage extends StatelessWidget {
+class KeranjangPage extends StatefulWidget {
   const KeranjangPage({super.key});
+
+  @override
+  State<KeranjangPage> createState() => _KeranjangPageState();
+}
+
+class _KeranjangPageState extends State<KeranjangPage> {
+  final _namaPembeliCon = TextEditingController();
+  final _alamatPenerimaCon = TextEditingController();
+
+  @override
+  void dispose() {
+    _namaPembeliCon.dispose();
+    _alamatPenerimaCon.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +64,7 @@ class KeranjangPage extends StatelessWidget {
                     }),
               ),
             ),
+            BagianAlamat(),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               height: 100,
@@ -102,6 +119,7 @@ class KeranjangPage extends StatelessWidget {
                                     ),
                                   ),
                                   TextFormField(
+                                    controller: _namaPembeliCon,
                                     decoration: const InputDecoration(
                                         label: Text('Nama Pembeli')),
                                   ),
@@ -109,6 +127,7 @@ class KeranjangPage extends StatelessWidget {
                                     height: 20,
                                   ),
                                   TextFormField(
+                                    controller: _alamatPenerimaCon,
                                     maxLines: 4,
                                     decoration: const InputDecoration(
                                         floatingLabelBehavior:
@@ -119,7 +138,16 @@ class KeranjangPage extends StatelessWidget {
                                   Align(
                                     alignment: Alignment.centerRight,
                                     child: ElevatedButton(
-                                        onPressed: () {},
+                                        onPressed: () {
+                                          Alamat alamat = Alamat.fromMap({
+                                            'namaPenerima': _namaPembeliCon,
+                                            'alamatPengiriman':
+                                                _alamatPenerimaCon,
+                                          });
+                                          Provider.of<AlamatProvider>(context,
+                                                  listen: false)
+                                              .insertAlamat(alamat);
+                                        },
                                         child: const Text('Kirim')),
                                   )
                                 ],
@@ -145,5 +173,36 @@ class KeranjangPage extends StatelessWidget {
             )
           ],
         ));
+  }
+}
+
+class BagianAlamat extends StatelessWidget {
+  const BagianAlamat({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 8),
+      child: Consumer<AlamatProvider>(
+        builder: (context, value, child) => SizedBox(
+          height: 100,
+          child: ListView.builder(
+            itemCount: value.listAlamat.length,
+            itemBuilder: (context, index) {
+              Alamat alamat = value.listAlamat[index];
+              return Card(
+                color: Colors.purple.shade50,
+                child: Column(
+                  children: [
+                    Text('Nama Penerima: ${alamat.namaPenerima.toUpperCase()}'),
+                    Text('Alamat Pengiriman: ${alamat.alamatPengiriman}'),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
   }
 }

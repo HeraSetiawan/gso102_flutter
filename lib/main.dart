@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:myapp/alamat.dart';
 import 'package:myapp/detail.dart';
 import 'package:myapp/provider_produk.dart';
 import 'package:myapp/store.dart';
 import 'package:provider/provider.dart';
 
-
-void main() =>
-  runApp(ChangeNotifierProvider(
-    create: (context) => ProviderProduk(),
-    child: const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MyApp(),
-    ),
-  ));
-
+void main() => runApp(MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => ProviderProduk(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => AlamatProvider(),
+        ),
+      ],
+      child: const MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: MyApp(),
+      ),
+    ));
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
@@ -43,8 +48,7 @@ class _MyAppState extends State<MyApp> {
         },
         destinations: const [
           NavigationDestination(icon: Icon(Icons.chat), label: "Chat"),
-          NavigationDestination(
-              icon: Icon(Icons.store), label: "My Store")
+          NavigationDestination(icon: Icon(Icons.store), label: "My Store")
         ],
       ),
     );
@@ -62,22 +66,27 @@ class PageSatu extends StatefulWidget {
 
 class _PageSatuState extends State<PageSatu> {
   bool isFavorit = false;
-  void like(){
+  void like() {
     setState(() {
       isFavorit = !isFavorit;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return ListView(children: [
       ListTile(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DetailPage())),
+        onTap: () => Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const DetailPage())),
         trailing: IconButton(
-          onPressed: like, 
-          icon: Icon(
-            isFavorit ? Icons.favorite : Icons.favorite_border, 
-            color: Colors.pink,)),
-        leading: const CircleAvatar(foregroundImage: NetworkImage("https://picsum.photos/200"),),
+            onPressed: like,
+            icon: Icon(
+              isFavorit ? Icons.favorite : Icons.favorite_border,
+              color: Colors.pink,
+            )),
+        leading: const CircleAvatar(
+          foregroundImage: NetworkImage("https://picsum.photos/200"),
+        ),
         title: const Text("Burger Keju"),
         subtitle: const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,11 +94,26 @@ class _PageSatuState extends State<PageSatu> {
             Text("Rp. 20.000"),
             Row(
               children: [
-                Icon(Icons.star, color: Colors.amber,),
-                Icon(Icons.star, color: Colors.amber,),
-                Icon(Icons.star, color: Colors.amber,),
-                Icon(Icons.star, color: Colors.grey,),
-                Icon(Icons.star, color: Colors.grey,),
+                Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                Icon(
+                  Icons.star,
+                  color: Colors.grey,
+                ),
+                Icon(
+                  Icons.star,
+                  color: Colors.grey,
+                ),
               ],
             )
           ],
